@@ -1,9 +1,9 @@
 #this is the inventory file
 [web_servers]
-ubuntu@52.55.96.106
+ubuntu@18.208.107.154
 
 [db_servers]
-ubuntu@54.161.174.134
+ubuntu@18.206.161.38
 
 [file_servers]
-ubuntu@3.86.29.154
+ubuntu@54.224.237.151
