@@ -2,7 +2,7 @@
 
 - hosts: all
   become: yes
-  tasks:
+  pre_tasks:
     - name: install upadtes for CentOS
       dnf:
         update_only: yes
@@ -14,6 +14,32 @@
         upgrade: dist
         update_cache: yes
       when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: yes
+  tasks:
+    - name: create user jay
+      tags: always
+      user:
+        name: jay
+        groups: root
+
+    - name: add ssh key for jay
+      tags: always
+      authorized_key:
+        user: jay
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOdamyElsSpFJ+PYexgqm/i75fbNHy76zcRgu98Tzs/ soham@LAPTOP-RNQRGUNJ"
+
+    - name: add sudoers file for jay
+      tags: always
+      copy:
+        src: jay_sudoer
+        dest: /etc/sudoers.d/jay
+        owner: root
+        group: root
+        mode: 0440
+
+
 
 - hosts: web_servers
   become: yes
@@ -43,6 +69,29 @@
           - php
         state: latest
         update_cache: yes
+      when: ansible_distribution == "CentOS"
+   
+    - name: change email address for admin
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin myaddress@somewhere.net
+      when: ansible_distribution == "CentOS"       
+      register: httpd
+
+    - name: restart apache, httpd
+      tags: apache, httpd, centos
+      service:
+        name: httpd
+        state: restarted
+      when: httpd.changed
+
+    - name: start httpd (CentOS)
+      tags: apche,centos,httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
       when: ansible_distribution == "CentOS"
 
 - hosts: db_servers
