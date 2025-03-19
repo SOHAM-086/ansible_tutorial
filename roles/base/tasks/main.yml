@@ -1,0 +1,5 @@
+- name: add ssh key for jay
+  tags: always
+  authorized_key:
+    user: jay
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOdamyElsSpFJ+PYexgqm/i75fbNHy76zcRgu98Tzs/ soham@LAPTOP-RNQRGUNJ"
